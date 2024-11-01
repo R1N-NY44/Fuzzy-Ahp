@@ -77,7 +77,7 @@
                 <th>No</th>
                 <th>Kriteria</th>
                 <th>Nama Kriteria</th>
-                <th style="width: 18%;">Bobot (1-9)</th>
+                <th style="width: 20%;">Bobot (1-9)</th>
             </tr>
             <tr>
                 <td>01</td>
@@ -86,6 +86,7 @@
                 <td><input type="range" id="nilaiAkademik" min="1" max="9" step="1"
                         oninput="document.getElementById('nilaiAkademikValue').innerText = this.value">
                     <span id="nilaiAkademikValue">5</span>
+                    <button onclick="resetSlider('nilaiAkademik', 'nilaiAkademikValue')">↩️</button>
                 </td>
             </tr>
             <tr>
@@ -95,6 +96,7 @@
                 <td><input type="range" id="sertifikasi" min="1" max="9" step="1"
                         oninput="document.getElementById('sertifikasiValue').innerText = this.value">
                     <span id="sertifikasiValue">5</span>
+                    <button onclick="resetSlider('sertifikasi', 'sertifikasiValue')">↩️</button>
                 </td>
             </tr>
             <tr>
@@ -104,6 +106,7 @@
                 <td><input type="range" id="prestasiKompetisi" min="1" max="9" step="1"
                         oninput="document.getElementById('prestasiKompetisiValue').innerText = this.value">
                     <span id="prestasiKompetisiValue">5</span>
+                    <button onclick="resetSlider('prestasiKompetisi', 'prestasiKompetisiValue')">↩️</button>
                 </td>
             </tr>
             <tr>
@@ -113,6 +116,7 @@
                 <td><input type="range" id="pengalamanProyek" min="1" max="9" step="1"
                         oninput="document.getElementById('pengalamanProyekValue').innerText = this.value">
                     <span id="pengalamanProyekValue">5</span>
+                    <button onclick="resetSlider('pengalamanProyek', 'pengalamanProyekValue')">↩️</button>
                 </td>
             </tr>
             <tr>
@@ -122,6 +126,7 @@
                 <td><input type="range" id="passion" min="1" max="9" step="1"
                         oninput="document.getElementById('passionValue').innerText = this.value">
                     <span id="passionValue">5</span>
+                    <button onclick="resetSlider('passion', 'passionValue')">↩️</button>
                 </td>
             </tr>
             <tr>
@@ -131,11 +136,16 @@
                 <td><input type="range" id="kriteriaTambahan" min="1" max="9" step="1"
                         oninput="document.getElementById('kriteriaTambahanValue').innerText = this.value">
                     <span id="kriteriaTambahanValue">5</span>
+                    <button onclick="resetSlider('kriteriaTambahan', 'kriteriaTambahanValue')">↩️</button>
                 </td>
             </tr>
         </table>
 
-        <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
+        <div style="display: flex; gap: 1rem;">
+            <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
+            <button onclick="resetSliders()">Reset Slider Pembobotan</button>
+        </div>
+
 
         <!-- Hasil Ranking -->
         <div id="rankingResults"></div>
@@ -207,7 +217,7 @@
         const lastName = [
             "Suryadi", "Wijaya", "Saputra", "Santoso", "Pratama", "Rahmawati", "Utama", "Susanti", "Putra", "Nuraini",
             "Mahardika", "Purnama", "Setiawan", "Hartono", "Handayani", "Wicaksono", "Hidayat", "Kartika", "Kusuma", "Permadi",
-            "Subagyo", "Maulana", "Yudistira", "Surya", "Adi", "Susilo", "Rahardjo", "Laksono", "Pamungkas", "Wijayanti", 
+            "Subagyo", "Maulana", "Yudistira", "Surya", "Adi", "Susilo", "Rahardjo", "Laksono", "Pamungkas", "Wijayanti",
             "Sutrisno", "Prakoso", "Nugroho", "Gunawan", "Saputri", "Mulya", "Raharjo", "Baskoro", "Amalia", "Saraswati"
         ];
 
@@ -227,6 +237,7 @@
             { name: "Budi Utama", criteria: [88, 90, 85, 91, 79, 70] },
         ];
 
+        // Load data mahasiswa ke dalam tabel
         function randomizeStudentData() {
             students.forEach(student => {
                 // Ambil nama depan dan belakang acak
@@ -242,16 +253,36 @@
             loadStudentTable();
         }
 
-        // Load data mahasiswa ke dalam tabel
-        // function loadStudentTable() {
-        //     const tableBody = document.getElementById("studentTableBody");
-        //     tableBody.innerHTML = "";
-        //     students.forEach((student, index) => {
-        //         const row = document.createElement("tr");
-        //         row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
-        //         tableBody.appendChild(row);
-        //     });
-        // }
+        function resetSlider(sliderId, valueId) {
+            const sliderElement = document.getElementById(sliderId);
+            const valueElement = document.getElementById(valueId);
+            sliderElement.value = 5; // Nilai default
+            valueElement.innerText = 5; // Perbarui teks tampilan
+        }
+
+
+        function resetSliders() {
+            // Tampilkan konfirmasi sebelum reset
+            if (confirm("Apakah Anda yakin ingin mereset semua slider ke nilai default?")) {
+                // Daftar ID slider dan ID teks di sampingnya
+                const sliders = [
+                    { id: "nilaiAkademik", valueId: "nilaiAkademikValue" },
+                    { id: "sertifikasi", valueId: "sertifikasiValue" },
+                    { id: "prestasiKompetisi", valueId: "prestasiKompetisiValue" },
+                    { id: "pengalamanProyek", valueId: "pengalamanProyekValue" },
+                    { id: "passion", valueId: "passionValue" },
+                    { id: "kriteriaTambahan", valueId: "kriteriaTambahanValue" }
+                ];
+
+                // Atur setiap slider ke nilai default, misalnya 5
+                sliders.forEach(slider => {
+                    const sliderElement = document.getElementById(slider.id);
+                    const valueElement = document.getElementById(slider.valueId);
+                    sliderElement.value = 5; // Nilai default
+                    valueElement.innerText = 5; // Perbarui teks tampilan
+                });
+            }
+        }
 
         function loadStudentTable() {
             const tableBody = document.getElementById("studentTableBody");
