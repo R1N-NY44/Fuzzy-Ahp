@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuzzy AHP Analysis</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .container { max-width: 900px; margin: auto; padding: 20px; }
+        .input-table td { text-align: left; padding: 5px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Analisis Fuzzy AHP untuk Peringkat Kandidat</h1>
+    
+    <h2>Bobot Kriteria</h2>
+    <p>Masukkan bobot kriteria dari 1 hingga 9 berdasarkan tingkat kepentingan setiap kriteria dalam evaluasi kandidat.</p>
+    <table class="input-table">
+        <tr><th>No</th><th>Kriteria</th><th>Nama Kriteria</th><th>Bobot (1-9)</th></tr>
+        <tr><td>01</td><td>K1</td><td>Nilai Akademik</td><td><input type="number" id="nilaiAkademik" min="1" max="9"></td></tr>
+        <tr><td>02</td><td>K2</td><td>Sertifikasi</td><td><input type="number" id="sertifikasi" min="1" max="9"></td></tr>
+        <tr><td>03</td><td>K3</td><td>Prestasi Kompetisi</td><td><input type="number" id="prestasiKompetisi" min="1" max="9"></td></tr>
+        <tr><td>04</td><td>K4</td><td>Pengalaman Proyek</td><td><input type="number" id="pengalamanProyek" min="1" max="9"></td></tr>
+        <tr><td>05</td><td>K5</td><td>Passion</td><td><input type="number" id="passion" min="1" max="9"></td></tr>
+        <tr><td>06</td><td>K6</td><td>Kriteria Tambahan</td><td><input type="number" id="kriteriaTambahan" min="1" max="9"></td></tr>
+    </table>
+    
+    <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
+    
+    <!-- Results Section -->
+    <div id="results"></div>
+</div>
+
+<script>
+    function runFuzzyAHP() {
+        // Retrieve weights from input fields
+        const weights = {
+            'Nilai Akademik': parseFloat(document.getElementById("nilaiAkademik").value),
+            'Sertifikasi': parseFloat(document.getElementById("sertifikasi").value),
+            'Prestasi Kompetisi': parseFloat(document.getElementById("prestasiKompetisi").value),
+            'Pengalaman Proyek': parseFloat(document.getElementById("pengalamanProyek").value),
+            'Passion': parseFloat(document.getElementById("passion").value),
+            'Kriteria Tambahan': parseFloat(document.getElementById("kriteriaTambahan").value),
+        };
+
+        const pairwiseMatrix = generatePairwiseMatrix(weights);
+        const tfn = generateTFNFromWeights(weights);
+        const normalizedTFN = normalizeTFN(tfn);
+        const fuzzyWeightVector = calculateFuzzyWeightVector(normalizedTFN);
+        const crispWeights = defuzzify(fuzzyWeightVector);
+        const normalizedCrispWeights = normalizeCrispWeights(crispWeights);
+        const lambda_max = calculateEigenvalue(pairwiseMatrix, normalizedCrispWeights);
+        const CI = calculateCI(lambda_max, Object.keys(weights).length);
+        const RI_values = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49];
+        const CR = calculateCR(CI, RI_values[Object.keys(weights).length - 1]);
+        const status = CR <= 0.1 ? "Konsisten" : "Tidak Konsisten";
+
+        console.log(normalizedCrispWeights);
+
+        // Display results in tables
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = `
+            <h2>1. Matriks Perbandingan Berpasangan</h2>
+            ${generateTable(pairwiseMatrix, true)}
+            <p>Penjelasan:</p>
+            <p>- Tahap ini membentuk matriks perbandingan berpasangan untuk mengukur seberapa penting setiap kriteria relatif terhadap kriteria lainnya.</p>
+            <p>Rumus: Matriks[i][j] = Bobot Kriteria[i] / Bobot Kriteria[j]</p>
+            <p>Tujuan:</p>
+            <p>- Membuat dasar perhitungan bobot relatif antara kriteria yang memungkinkan penerapan metode fuzzy. Dengan membandingkan setiap kriteria satu sama lain, kita dapat menangkap informasi preferensi yang lebih rinci.</p>
+
+            <h2>2. Triangular Fuzzy Numbers (TFN)</h2>
+            ${generateTable(tfn)}
+            <p>Penjelasan:</p>
+            <p>- TFN digunakan untuk mengakomodasi ketidakpastian dalam bobot kriteria, dengan nilai lower, middle, dan upper.</p>
+            <p>Rumus: TFN[i] = [weight - (weight * threshold), weight, weight + (weight * threshold)]</p>
+            <p>Tujuan:</p>
+            <p>- Memperkenalkan ketidakpastian dalam bobot kriteria agar lebih fleksibel, mencerminkan kondisi dunia nyata di mana penilaian sering kali variatif.</p>
+
+            <h2>3. Normalisasi TFN</h2>
+            ${generateTable(normalizedTFN)}
+            <p>Penjelasan:</p>
+            <p>- Normalisasi dilakukan dengan membagi setiap nilai lower, middle, dan upper dari TFN setiap kriteria dengan total lower, middle, dan upper dari semua kriteria.</p>
+            <p>Rumus: TFN Normalisasi[i] = TFN[i] / Total TFN</p>
+            <p>Tujuan:</p>
+            <p>- Menyamakan skala TFN semua kriteria sehingga dapat dibandingkan secara proporsional, memastikan semua nilai berkontribusi secara adil pada pembobotan.</p>
+
+            <h2>4. Vektor Bobot Fuzzy</h2>
+            ${generateTable(fuzzyWeightVector)}
+            <p>Penjelasan:</p>
+            <p>- Menggunakan akar pangkat untuk mendapatkan bobot fuzzy yang dinormalisasi dari setiap kriteria.</p>
+            <p>Rumus: Vektor Bobot Fuzzy[i] = (Lower^(1/n), Middle^(1/n), Upper^(1/n))</p>
+            <p>Tujuan:</p>
+            <p>- Menghasilkan vektor bobot fuzzy yang memberikan bobot relatif untuk setiap kriteria, memungkinkan representasi nilai bobot yang lebih terukur dalam konteks multi-kriteria.</p>
+
+            <h2>5. Bobot Crisp</h2>
+            ${generateTable(crispWeights, false, true)}
+            <p>Penjelasan:</p>
+            <p>- Menggunakan metode Center of Area (CoA) untuk mendefuzzifikasi bobot fuzzy menjadi satu nilai crisp.</p>
+            <p>Rumus: Bobot Crisp[i] = (Lower + Middle + Upper) / 3</p>
+            <p>Tujuan:</p>
+            <p>- Mendapatkan bobot tunggal atau crisp weight dari setiap kriteria yang dapat digunakan langsung dalam evaluasi dan perankingan kandidat.</p>
+
+            <h2>6. Normalisasi Bobot Crisp</h2>
+            ${generateTable(normalizedCrispWeights, false, true)}
+            <p>Penjelasan:</p>
+            <p>- Bobot crisp dinormalisasi dengan membaginya dengan total bobot crisp agar skala bobot konsisten.</p>
+            <p>Rumus: Bobot Crisp Normalisasi[i] = Bobot Crisp[i] / Total Bobot Crisp</p>
+            <p>Tujuan:</p>
+            <p>- Membuat bobot crisp lebih terstandardisasi, sehingga total kontribusi bobot seluruh kriteria berjumlah 1, memudahkan proses evaluasi akhir.</p>
+
+            <h2>7. Rasio Konsistensi (CR)</h2>
+            <table>
+                <tr><td>Max Eigenvalue (λ max)</td><td>${lambda_max.toFixed(4)}</td></tr>
+                <tr><td>Consistency Index (CI)</td><td>${CI.toFixed(4)}</td></tr>
+                <tr><td>Consistency Ratio (CR)</td><td>${CR.toFixed(4)}</td></tr>
+                <tr><td>Status</td><td>${status}</td></tr>
+            </table>
+            <p>Penjelasan:</p>
+            <p>- Tahap ini mengukur konsistensi dari matriks perbandingan berpasangan dengan menghitung Max Eigenvalue, CI, dan CR.</p>
+            <p>Rumus:</p>
+            <p>- Max Eigenvalue (λ max): Menghitung nilai rata-rata untuk konsistensi.</p>
+            <p>- CI = (λ max - n) / (n - 1)</p>
+            <p>- CR = CI / RI (Random Index)</p>
+            <p>Tujuan:</p>
+            <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
+        `;
+    }
+
+    // Functions for each FAHP calculation step remain the same as previous code
+    function generatePairwiseMatrix(weights) {
+        const matrix = {};
+        const criteria = Object.keys(weights);
+        criteria.forEach(ci => {
+            matrix[ci] = {};
+            criteria.forEach(cj => {
+                matrix[ci][cj] = [weights[ci] / weights[cj], weights[ci] / weights[cj], weights[ci] / weights[cj]];
+            });
+        });
+        return matrix;
+    }
+
+    function generateTFNFromWeights(weights, threshold = 0.15) {
+        const tfn = {};
+        Object.entries(weights).forEach(([key, weight]) => {
+            const lower = weight - (weight * threshold);
+            const middle = weight;
+            const upper = weight + (weight * threshold);
+            tfn[key] = [lower, middle, upper];
+        });
+        return tfn;
+    }
+
+    function normalizeTFN(tfn) {
+        const total = [0, 0, 0];
+        Object.values(tfn).forEach(values => {
+            for (let i = 0; i < 3; i++) {
+                total[i] += values[i];
+            }
+        });
+        const normalizedTFN = {};
+        Object.entries(tfn).forEach(([key, values]) => {
+            normalizedTFN[key] = [values[0] / total[2], values[1] / total[1], values[2] / total[0]];
+        });
+        return normalizedTFN;
+    }
+
+    function calculateFuzzyWeightVector(normalizedTFN) {
+        const fuzzyWeightVector = {};
+        const n = Object.keys(normalizedTFN).length;
+        Object.entries(normalizedTFN).forEach(([key, values]) => {
+            fuzzyWeightVector[key] = [Math.pow(values[0], 1/n), Math.pow(values[1], 1/n), Math.pow(values[2], 1/n)];
+        });
+        return fuzzyWeightVector;
+    }
+
+    function defuzzify(fuzzyWeightVector) {
+        const crispWeights = {};
+        Object.entries(fuzzyWeightVector).forEach(([key, values]) => {
+            crispWeights[key] = (values[0] + values[1] + values[2]) / 3;
+        });
+        return crispWeights;
+    }
+
+    function normalizeCrispWeights(crispWeights) {
+        const total = Object.values(crispWeights).reduce((sum, weight) => sum + weight, 0);
+        const normalizedWeights = {};
+        Object.entries(crispWeights).forEach(([key, weight]) => {
+            normalizedWeights[key] = weight / total;
+        });
+        return normalizedWeights;
+    }
+
+    function calculateEigenvalue(matrix, weights) {
+        const n = Object.keys(weights).length;
+        let sum = 0;
+        Object.entries(weights).forEach(([i, wi]) => {
+            let rowSum = 0;
+            Object.entries(weights).forEach(([j, wj]) => {
+                rowSum += matrix[i][j][1] * wj;
+            });
+            sum += rowSum / wi;
+        });
+        return sum / n;
+    }
+
+    function calculateCI(lambda, n) {
+        return (lambda - n) / (n - 1);
+    }
+
+    function calculateCR(CI, RI) {
+        return CI / RI;
+    }
+
+    function generateTable(data, isMatrix = false, singleColumn = false) {
+        let html = '<table><thead><tr>';
+        const keys = Object.keys(data);
+        html += `<th>${isMatrix ? 'Kriteria' : 'Nama'}</th>`;
+        if (isMatrix) {
+            keys.forEach(key => html += `<th>${key}</th>`);
+            html += '</tr></thead><tbody>';
+            keys.forEach(key => {
+                html += `<tr><td>${key}</td>`;
+                keys.forEach(subkey => html += `<td>${data[key][subkey][1].toFixed(2)}</td>`);
+                html += '</tr>';
+            });
+        } else {
+            if (!singleColumn) html += '<th>Lower</th><th>Middle</th><th>Upper</th>';
+            else html += '<th>Value</th>';
+            html += '</tr></thead><tbody>';
+            Object.entries(data).forEach(([key, values]) => {
+                html += `<tr><td>${key}</td>`;
+                if (!singleColumn) {
+                    values.forEach(val => html += `<td>${val.toFixed(4)}</td>`);
+                } else {
+                    html += `<td>${values.toFixed(4)}</td>`;
+                }
+                html += '</tr>';
+            });
+        }
+        html += '</tbody></table>';
+        return html;
+    }
+</script>
+</body>
+</html>
