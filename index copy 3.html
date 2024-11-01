@@ -34,37 +34,24 @@
             text-align: left;
             padding: 5px;
         }
-
-        /* Dashed border */
-        hr.dashed {
-            border-top: 3px dashed #bbb;
-        }
-        /* Dotted border */
-        hr.dotted {
-            border-top: 3px dotted #bbb;
-        }
-        /* Solid border */
-        hr.solid {
-            border-top: 3px solid #bbb;
-        }
-        /* Rounded border */
-        hr.rounded {
-            border-top: 8px solid #bbb;
-            border-radius: 5px;
-        }
-
-        .hr-xl {
-            margin: 3rem 0rem;
-            border: 0;
-            border-top: 2px dashed rgba(0, 0, 0, 0.29);
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Analisis Fuzzy AHP untuk Peringkat Kandidat</h1>
-        <hr>
+
+        <!-- <h2>Bobot Kriteria</h2>
+    <p>Masukkan bobot kriteria dari 1 hingga 9 berdasarkan tingkat kepentingan setiap kriteria dalam evaluasi kandidat.</p>
+    <table class="input-table">
+        <tr><th>No</th><th>Kriteria</th><th>Nama Kriteria</th><th>Bobot (1-9)</th></tr>
+        <tr><td>01</td><td>K1</td><td>Nilai Akademik</td><td><input type="number" id="nilaiAkademik" min="1" max="9"></td></tr>
+        <tr><td>02</td><td>K2</td><td>Sertifikasi</td><td><input type="number" id="sertifikasi" min="1" max="9"></td></tr>
+        <tr><td>03</td><td>K3</td><td>Prestasi Kompetisi</td><td><input type="number" id="prestasiKompetisi" min="1" max="9"></td></tr>
+        <tr><td>04</td><td>K4</td><td>Pengalaman Proyek</td><td><input type="number" id="pengalamanProyek" min="1" max="9"></td></tr>
+        <tr><td>05</td><td>K5</td><td>Passion</td><td><input type="number" id="passion" min="1" max="9"></td></tr>
+        <tr><td>06</td><td>K6</td><td>Kriteria Tambahan</td><td><input type="number" id="kriteriaTambahan" min="1" max="9"></td></tr>
+    </table> -->
 
         <h2>Bobot Kriteria</h2>
         <p>Geser slider untuk menetapkan bobot kriteria dari 1 hingga 9 berdasarkan tingkat kepentingan setiap kriteria
@@ -132,6 +119,7 @@
             </tr>
         </table>
 
+
         <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
 
         <!-- Hasil Ranking -->
@@ -159,7 +147,7 @@
         <!-- Tabel Hasil Tahapan FAHP -->
         <div id="results"></div>
 
-        <!-- Jurnal Referensi -->
+        <!-- Jurnal Refrensi -->
         <div>
             <h2>Referensi</h2>
             <table>
@@ -187,6 +175,7 @@
                     <td>2010</td>
                     <td><a href="https://sci-hub.st/10.1016/j.eswa.2010.02.095" target="_blank">Link</a></td>
                 </tr>
+                <!-- <tr><td>02</td><td>Fuzzy multiple attribute decision making: Methods and applications.</td><td>Chen, S. J., & Hwang, C. L.</td><td>1992</td><td><a href="https://sci-hub.st/10.1142/9789812795533_0002" target="_blank">Link</a></td></tr> -->
             </table>
         </div>
     </div>
@@ -245,87 +234,76 @@
             // Display results in tables
             const resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = `
-                <hr class="hr-xl">
-                <h1 style="text-align: center;" >Hasil Analisis Fuzzy AHP</h1>
-                <hr>
+            <h2>1. Matriks Perbandingan Berpasangan</h2>
+            ${generateTable(pairwiseMatrix, true)}
+            <p>Penjelasan:</p>
+            <p>- Tahap ini membentuk matriks perbandingan berpasangan untuk mengukur seberapa penting setiap kriteria relatif terhadap kriteria lainnya.</p>
+            <p>Rumus: Matriks[i][j] = Bobot Kriteria[i] / Bobot Kriteria[j]</p>
+            <p>Tujuan:</p>
+            <p>- Membuat dasar perhitungan bobot relatif antara kriteria yang memungkinkan penerapan metode fuzzy. Dengan membandingkan setiap kriteria satu sama lain, kita dapat menangkap informasi preferensi yang lebih rinci.</p>
 
+            <h2>2. Triangular Fuzzy Numbers (TFN)</h2>
+            ${generateTable(tfn)}
+            <p>Penjelasan:</p>
+            <p>- TFN digunakan untuk mengakomodasi ketidakpastian dalam bobot kriteria, dengan nilai lower, middle, dan upper.</p>
+            <p>Rumus: TFN[i] = [weight - (weight * threshold), weight, weight + (weight * threshold)]</p>
+            <p>Tujuan:</p>
+            <p>- Memperkenalkan ketidakpastian dalam bobot kriteria agar lebih fleksibel, mencerminkan kondisi dunia nyata di mana penilaian sering kali variatif.</p>
 
-                <h2>1. Matriks Perbandingan Berpasangan</h2>
-                ${generateTable(pairwiseMatrix, true)}
-                <p>Penjelasan:</p>
-                <p>- Tahap ini membentuk matriks perbandingan berpasangan untuk mengukur seberapa penting setiap kriteria relatif terhadap kriteria lainnya.</p>
-                <p>Rumus: Matriks[i][j] = Bobot Kriteria[i] / Bobot Kriteria[j]</p>
-                <p>Tujuan:</p>
-                <p>- Membuat dasar perhitungan bobot relatif antara kriteria yang memungkinkan penerapan metode fuzzy. Dengan membandingkan setiap kriteria satu sama lain, kita dapat menangkap informasi preferensi yang lebih rinci.</p>
-                <br><br>
+            <h2>3. Normalisasi TFN</h2>
+            ${generateTable(normalizedTFN)}
+            <p>Penjelasan:</p>
+            <p>- Normalisasi dilakukan dengan membagi setiap nilai lower, middle, dan upper dari TFN setiap kriteria dengan total lower, middle, dan upper dari semua kriteria.</p>
+            <p>Rumus: TFN Normalisasi[i] = TFN[i] / Total TFN</p>
+            <p>Tujuan:</p>
+            <p>- Menyamakan skala TFN semua kriteria sehingga dapat dibandingkan secara proporsional, memastikan semua nilai berkontribusi secara adil pada pembobotan.</p>
 
-                <h2>2. Triangular Fuzzy Numbers (TFN)</h2>
-                ${generateTable(tfn)}
-                <p>Penjelasan:</p>
-                <p>- TFN digunakan untuk mengakomodasi ketidakpastian dalam bobot kriteria, dengan nilai lower, middle, dan upper.</p>
-                <p>Rumus: TFN[i] = [weight - (weight * threshold), weight, weight + (weight * threshold)]</p>
-                <p>Tujuan:</p>
-                <p>- Memperkenalkan ketidakpastian dalam bobot kriteria agar lebih fleksibel, mencerminkan kondisi dunia nyata di mana penilaian sering kali variatif.</p>
-                <br><br>
+            <h2>4. Vektor Bobot Fuzzy</h2>
+            ${generateTable(fuzzyWeightVector)}
+            <p>Penjelasan:</p>
+            <p>- Menggunakan akar pangkat untuk mendapatkan bobot fuzzy yang dinormalisasi dari setiap kriteria.</p>
+            <p>Rumus: Vektor Bobot Fuzzy[i] = (Lower^(1/n), Middle^(1/n), Upper^(1/n))</p>
+            <p>Tujuan:</p>
+            <p>- Menghasilkan vektor bobot fuzzy yang memberikan bobot relatif untuk setiap kriteria, memungkinkan representasi nilai bobot yang lebih terukur dalam konteks multi-kriteria.</p>
 
-                <h2>3. Normalisasi TFN</h2>
-                ${generateTable(normalizedTFN)}
-                <p>Penjelasan:</p>
-                <p>- Normalisasi dilakukan dengan membagi setiap nilai lower, middle, dan upper dari TFN setiap kriteria dengan total lower, middle, dan upper dari semua kriteria.</p>
-                <p>Rumus: TFN Normalisasi[i] = TFN[i] / Total TFN</p>
-                <p>Tujuan:</p>
-                <p>- Menyamakan skala TFN semua kriteria sehingga dapat dibandingkan secara proporsional, memastikan semua nilai berkontribusi secara adil pada pembobotan.</p>
-                <br><br>
+            <h2>5. Bobot Crisp</h2>
+            ${generateTable(crispWeights, false, true)}
+            <p>Penjelasan:</p>
+            <p>- Menggunakan metode Center of Area (CoA) untuk mendefuzzifikasi bobot fuzzy menjadi satu nilai crisp.</p>
+            <p>Rumus: Bobot Crisp[i] = (Lower + Middle + Upper) / 3</p>
+            <p>Tujuan:</p>
+            <p>- Mendapatkan bobot tunggal atau crisp weight dari setiap kriteria yang dapat digunakan langsung dalam evaluasi dan perankingan kandidat.</p>
 
-                <h2>4. Vektor Bobot Fuzzy</h2>
-                ${generateTable(fuzzyWeightVector)}
-                <p>Penjelasan:</p>
-                <p>- Menggunakan akar pangkat untuk mendapatkan bobot fuzzy yang dinormalisasi dari setiap kriteria.</p>
-                <p>Rumus: Vektor Bobot Fuzzy[i] = (Lower^(1/n), Middle^(1/n), Upper^(1/n))</p>
-                <p>Tujuan:</p>
-                <p>- Menghasilkan vektor bobot fuzzy yang memberikan bobot relatif untuk setiap kriteria, memungkinkan representasi nilai bobot yang lebih terukur dalam konteks multi-kriteria.</p>
-                <br><br>
+            <h2>6. Normalisasi Bobot Crisp</h2>
+            ${generateTable(normalizedCrispWeights, false, true)}
+            <p>Penjelasan:</p>
+            <p>- Bobot crisp dinormalisasi dengan membaginya dengan total bobot crisp agar skala bobot konsisten.</p>
+            <p>Rumus: Bobot Crisp Normalisasi[i] = Bobot Crisp[i] / Total Bobot Crisp</p>
+            <p>Tujuan:</p>
+            <p>- Membuat bobot crisp lebih terstandardisasi, sehingga total kontribusi bobot seluruh kriteria berjumlah 1, memudahkan proses evaluasi akhir.</p>
 
-                <h2>5. Bobot Crisp</h2>
-                ${generateTable(crispWeights, false, true)}
-                <p>Penjelasan:</p>
-                <p>- Menggunakan metode Center of Area (CoA) untuk mendefuzzifikasi bobot fuzzy menjadi satu nilai crisp.</p>
-                <p>Rumus: Bobot Crisp[i] = (Lower + Middle + Upper) / 3</p>
-                <p>Tujuan:</p>
-                <p>- Mendapatkan bobot tunggal atau crisp weight dari setiap kriteria yang dapat digunakan langsung dalam evaluasi dan perankingan kandidat.</p>
-                <br><br>
-
-                <h2>6. Normalisasi Bobot Crisp</h2>
-                ${generateTable(normalizedCrispWeights, false, true)}
-                <p>Penjelasan:</p>
-                <p>- Bobot crisp dinormalisasi dengan membaginya dengan total bobot crisp agar skala bobot konsisten.</p>
-                <p>Rumus: Bobot Crisp Normalisasi[i] = Bobot Crisp[i] / Total Bobot Crisp</p>
-                <p>Tujuan:</p>
-                <p>- Membuat bobot crisp lebih terstandardisasi, sehingga total kontribusi bobot seluruh kriteria berjumlah 1, memudahkan proses evaluasi akhir.</p>
-                <br><br>
-
-                <h2>7. Rasio Konsistensi (CR)</h2>
-                <table>
-                <tr><th>Max Eigenvalue (λ max)</th><th>Consistency Index (CI)</th><th>Consistency Ratio (CR)</th><th>Status</th></tr>
-                <tr><td>${lambda_max.toFixed(4)}</td><td>${CI.toFixed(4)}</td><td>${CR.toFixed(4)}</td><td>${status}</td></tr>
-                </table>
-                <p>Penjelasan:</p>
-                <p>- Tahap ini mengukur konsistensi dari matriks perbandingan berpasangan dengan menghitung Max Eigenvalue, CI, dan CR.</p>
-                <p>Rumus:</p>
-                <p>- Max Eigenvalue (λ max): Menghitung nilai rata-rata untuk konsistensi.</p>
-                <p>- CI = (λ max - n) / (n - 1)</p>
-                <p>- CR = CI / RI (Random Index)</p>
-                <p>Tujuan:</p>
-                <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
-                <br><br>
-            `;
+            <h2>7. Rasio Konsistensi (CR)</h2>
+            <table>
+                <tr><td>Max Eigenvalue (λ max)</td><td>${lambda_max.toFixed(4)}</td></tr>
+                <tr><td>Consistency Index (CI)</td><td>${CI.toFixed(4)}</td></tr>
+                <tr><td>Consistency Ratio (CR)</td><td>${CR.toFixed(4)}</td></tr>
+                <tr><td>Status</td><td>${status}</td></tr>
+            </table>
+            <p>Penjelasan:</p>
+            <p>- Tahap ini mengukur konsistensi dari matriks perbandingan berpasangan dengan menghitung Max Eigenvalue, CI, dan CR.</p>
+            <p>Rumus:</p>
+            <p>- Max Eigenvalue (λ max): Menghitung nilai rata-rata untuk konsistensi.</p>
+            <p>- CI = (λ max - n) / (n - 1)</p>
+            <p>- CR = CI / RI (Random Index)</p>
+            <p>Tujuan:</p>
+            <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
+        `;
 
             // Calculate ranking and display ranking table
             students.forEach(student => {
                 student.score = student.criteria.reduce((sum, value, index) => {
                     return sum + value * Object.values(normalizedCrispWeights)[index];
                 }, 0);
-                student.average = student.criteria.reduce((a, b) => a + b, 0) / student.criteria.length;
             });
 
             students.sort((a, b) => b.score - a.score);
@@ -336,7 +314,6 @@
                                     <th>Rank</th>
                                     <th>Nama Mahasiswa</th>
                                     <th>Skor</th>
-                                    <th>Rata-Rata Nilai</th>
                                     <th>Nilai Akademik</th>
                                     <th>Sertifikasi</th>
                                     <th>Prestasi Kompetisi</th>
@@ -350,7 +327,6 @@
                                 <td>${index + 1}</td>
                                 <td>${student.name}</td>
                                 <td>${student.score.toFixed(2)}</td>
-                                <td>${student.average.toFixed(2)}</td>
                                 ${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}
                             </tr>`;
             });
@@ -371,7 +347,7 @@
             return matrix;
         }
 
-        function generateTFNFromWeights(weights, threshold = 0.25) {
+        function generateTFNFromWeights(weights, threshold = 0.15) {
             const tfn = {};
             Object.entries(weights).forEach(([key, weight]) => {
                 const lower = weight - (weight * threshold);
