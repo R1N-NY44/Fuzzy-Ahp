@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisis Fuzzy AHP untuk Peringkat Kandidat</title>
+    <title>Fuzzy AHP Analysis</title>
     <style>
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
@@ -30,62 +30,13 @@
     
     <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
     
-    <!-- Hasil Ranking -->
-    <div id="rankingResults"></div>
-
-    <!-- Tabel Data Mahasiswa Dummy -->
-    <h2>Data Mahasiswa</h2>
-    <table id="studentTable">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Mahasiswa</th>
-                <th>Nilai Akademik</th>
-                <th>Sertifikasi</th>
-                <th>Prestasi Kompetisi</th>
-                <th>Pengalaman Proyek</th>
-                <th>Passion</th>
-                <th>Kriteria Tambahan</th>
-            </tr>
-        </thead>
-        <tbody id="studentTableBody">
-        </tbody>
-    </table>
-
-    <!-- Tabel Hasil Tahapan FAHP -->
+    <!-- Results Section -->
     <div id="results"></div>
 </div>
 
 <script>
-    // Data Mahasiswa Dummy
-    const students = [
-        {name: "Zhelter", criteria: [80, 90, 85, 95, 75, 65]},
-        {name: "Andra", criteria: [75, 85, 80, 90, 70, 60]},
-        {name: "Rachel", criteria: [85, 88, 80, 85, 75, 65]},
-        {name: "John", criteria: [70, 78, 75, 80, 70, 60]},
-        {name: "Lily", criteria: [90, 85, 80, 95, 78, 70]},
-        {name: "Mark", criteria: [88, 92, 85, 87, 80, 65]},
-        {name: "Elisa", criteria: [78, 75, 70, 88, 72, 66]},
-        {name: "Sam", criteria: [82, 85, 83, 86, 78, 69]},
-        {name: "Lucy", criteria: [76, 80, 79, 82, 75, 68]},
-        {name: "Peter", criteria: [88, 90, 85, 91, 79, 70]},
-    ];
-
-    // Load data mahasiswa ke dalam tabel
-    function loadStudentTable() {
-        const tableBody = document.getElementById("studentTableBody");
-        tableBody.innerHTML = "";
-        students.forEach((student, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
-            tableBody.appendChild(row);
-        });
-    }
-
-    loadStudentTable();
-
     function runFuzzyAHP() {
-        // Ambil bobot dari input field
+        // Retrieve weights from input fields
         const weights = {
             'Nilai Akademik': parseFloat(document.getElementById("nilaiAkademik").value),
             'Sertifikasi': parseFloat(document.getElementById("sertifikasi").value),
@@ -106,6 +57,8 @@
         const RI_values = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49];
         const CR = calculateCR(CI, RI_values[Object.keys(weights).length - 1]);
         const status = CR <= 0.1 ? "Konsisten" : "Tidak Konsisten";
+
+        console.log(normalizedCrispWeights);
 
         // Display results in tables
         const resultsDiv = document.getElementById("results");
@@ -174,43 +127,9 @@
             <p>Tujuan:</p>
             <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
         `;
-
-        // Calculate ranking and display ranking table
-        students.forEach(student => {
-            student.score = student.criteria.reduce((sum, value, index) => {
-                return sum + value * Object.values(normalizedCrispWeights)[index];
-            }, 0);
-        });
-
-        students.sort((a, b) => b.score - a.score);
-
-        let rankingTable = `<h2>Ranking Mahasiswa</h2>
-                            <table>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Nama Mahasiswa</th>
-                                    <th>Skor</th>
-                                    <th>Nilai Akademik</th>
-                                    <th>Sertifikasi</th>
-                                    <th>Prestasi Kompetisi</th>
-                                    <th>Pengalaman Proyek</th>
-                                    <th>Passion</th>
-                                    <th>Kriteria Tambahan</th>
-                                </tr>`;
-
-        students.forEach((student, index) => {
-            rankingTable += `<tr>
-                                <td>${index + 1}</td>
-                                <td>${student.name}</td>
-                                <td>${student.score.toFixed(2)}</td>
-                                ${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}
-                            </tr>`;
-        });
-
-        rankingTable += `</table>`;
-        document.getElementById("rankingResults").innerHTML = rankingTable;
     }
 
+    // Functions for each FAHP calculation step remain the same as previous code
     function generatePairwiseMatrix(weights) {
         const matrix = {};
         const criteria = Object.keys(weights);
