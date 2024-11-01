@@ -25,7 +25,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
             padding: 20px;
         }
@@ -39,14 +39,17 @@
         hr.dashed {
             border-top: 3px dashed #bbb;
         }
+
         /* Dotted border */
         hr.dotted {
             border-top: 3px dotted #bbb;
         }
+
         /* Solid border */
         hr.solid {
             border-top: 3px solid #bbb;
         }
+
         /* Rounded border */
         hr.rounded {
             border-top: 8px solid #bbb;
@@ -155,6 +158,7 @@
             <tbody id="studentTableBody">
             </tbody>
         </table>
+        <button onclick="randomizeStudentData()">Randomisasi Data Dummy</button>
 
         <!-- Tabel Hasil Tahapan FAHP -->
         <div id="results"></div>
@@ -192,30 +196,77 @@
     </div>
 
     <script>
-        // Data Mahasiswa Dummy
-        const students = [
-            { name: "Zhelter", criteria: [80, 90, 85, 95, 75, 65] },
-            { name: "Andra", criteria: [75, 85, 80, 90, 70, 60] },
-            { name: "Rachel", criteria: [85, 88, 80, 85, 75, 65] },
-            { name: "John", criteria: [70, 78, 75, 80, 70, 60] },
-            { name: "Lily", criteria: [90, 85, 80, 95, 78, 70] },
-            { name: "Mark", criteria: [88, 92, 85, 87, 80, 65] },
-            { name: "Elisa", criteria: [78, 75, 70, 88, 72, 66] },
-            { name: "Sam", criteria: [82, 85, 83, 86, 78, 69] },
-            { name: "Lucy", criteria: [76, 80, 79, 82, 75, 68] },
-            { name: "Peter", criteria: [88, 90, 85, 91, 79, 70] },
+
+        const firstName = [
+            "Ahmad", "Putri", "Rizky", "Dewi", "Budi", "Rani", "Agus", "Siti", "Bayu", "Lestari",
+            "Ayu", "Hendra", "Fitri", "Joko", "Intan", "Eka", "Wahyu", "Nurul", "Dimas", "Ratna",
+            "Gilang", "Yuni", "Andi", "Sri", "Asep", "Mega", "Rina", "Teguh", "Indah", "Fajar",
+            "Hani", "Edi", "Dewanto", "Rendra", "Wulan", "Arif", "Melati", "Farid", "Maya", "Vina", "Adi"
         ];
 
+        const lastName = [
+            "Suryadi", "Wijaya", "Saputra", "Santoso", "Pratama", "Rahmawati", "Utama", "Susanti", "Putra", "Nuraini",
+            "Mahardika", "Purnama", "Setiawan", "Hartono", "Handayani", "Wicaksono", "Hidayat", "Kartika", "Kusuma", "Permadi",
+            "Subagyo", "Maulana", "Yudistira", "Surya", "Adi", "Susilo", "Rahardjo", "Laksono", "Pamungkas", "Wijayanti", 
+            "Sutrisno", "Prakoso", "Nugroho", "Gunawan", "Saputri", "Mulya", "Raharjo", "Baskoro", "Amalia", "Saraswati"
+        ];
+
+        const grades = [60, 65, 70, 75, 80, 85, 90];
+
+        // Data Mahasiswa Dummy
+        const students = [
+            { name: "Budi Pratama", criteria: [80, 90, 85, 95, 75, 65] },
+            { name: "Lestari Rahmawati", criteria: [75, 85, 80, 90, 70, 60] },
+            { name: "Agus Santoso", criteria: [85, 88, 80, 85, 75, 65] },
+            { name: "Ahmad Pratama", criteria: [70, 78, 75, 80, 70, 60] },
+            { name: "Rani Susanti", criteria: [90, 85, 80, 95, 78, 70] },
+            { name: "Rizky Saputra", criteria: [88, 92, 85, 87, 80, 65] },
+            { name: "Putri Wijaya", criteria: [78, 75, 70, 88, 72, 66] },
+            { name: "Dewi Rahmawati", criteria: [82, 85, 83, 86, 78, 69] },
+            { name: "Siti Nuraini", criteria: [76, 80, 79, 82, 75, 68] },
+            { name: "Budi Utama", criteria: [88, 90, 85, 91, 79, 70] },
+        ];
+
+        function randomizeStudentData() {
+            students.forEach(student => {
+                // Ambil nama depan dan belakang acak
+                const randomFirstName = firstName[Math.floor(Math.random() * firstName.length)];
+                const randomLastName = lastName[Math.floor(Math.random() * lastName.length)];
+                student.name = `${randomFirstName} ${randomLastName}`;
+
+                // Ambil 6 nilai acak dari array grades untuk kriteria
+                student.criteria = Array.from({ length: 6 }, () => grades[Math.floor(Math.random() * grades.length)]);
+            });
+
+            // Perbarui tabel setelah data diacak
+            loadStudentTable();
+        }
+
         // Load data mahasiswa ke dalam tabel
+        // function loadStudentTable() {
+        //     const tableBody = document.getElementById("studentTableBody");
+        //     tableBody.innerHTML = "";
+        //     students.forEach((student, index) => {
+        //         const row = document.createElement("tr");
+        //         row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
+        //         tableBody.appendChild(row);
+        //     });
+        // }
+
         function loadStudentTable() {
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
-            students.forEach((student, index) => {
+
+            // Urutkan berdasarkan nama
+            const sortedStudents = [...students].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedStudents.forEach((student, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
                 tableBody.appendChild(row);
             });
         }
+
 
         loadStudentTable();
 
