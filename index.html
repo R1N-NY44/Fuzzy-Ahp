@@ -1,22 +1,47 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analisis Fuzzy AHP untuk Peringkat Kandidat</title>
     <style>
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        .container { max-width: 900px; margin: auto; padding: 20px; }
-        .input-table td { text-align: left; padding: 5px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .input-table td {
+            text-align: left;
+            padding: 5px;
+        }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>Analisis Fuzzy AHP untuk Peringkat Kandidat</h1>
-    
-    <h2>Bobot Kriteria</h2>
+    <div class="container">
+        <h1>Analisis Fuzzy AHP untuk Peringkat Kandidat</h1>
+
+        <!-- <h2>Bobot Kriteria</h2>
     <p>Masukkan bobot kriteria dari 1 hingga 9 berdasarkan tingkat kepentingan setiap kriteria dalam evaluasi kandidat.</p>
     <table class="input-table">
         <tr><th>No</th><th>Kriteria</th><th>Nama Kriteria</th><th>Bobot (1-9)</th></tr>
@@ -26,101 +51,189 @@
         <tr><td>04</td><td>K4</td><td>Pengalaman Proyek</td><td><input type="number" id="pengalamanProyek" min="1" max="9"></td></tr>
         <tr><td>05</td><td>K5</td><td>Passion</td><td><input type="number" id="passion" min="1" max="9"></td></tr>
         <tr><td>06</td><td>K6</td><td>Kriteria Tambahan</td><td><input type="number" id="kriteriaTambahan" min="1" max="9"></td></tr>
-    </table>
-    
-    <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
+    </table> -->
 
-    <!-- Hasil Ranking -->
-    <div id="rankingResults"></div>
-
-    <!-- Tabel Data Mahasiswa Dummy -->
-    <h2>Data Mahasiswa</h2>
-    <table id="studentTable">
-        <thead>
+        <h2>Bobot Kriteria</h2>
+        <p>Geser slider untuk menetapkan bobot kriteria dari 1 hingga 9 berdasarkan tingkat kepentingan setiap kriteria
+            dalam evaluasi kandidat.</p>
+        <table class="input-table">
             <tr>
                 <th>No</th>
-                <th>Nama Mahasiswa</th>
-                <th>Nilai Akademik</th>
-                <th>Sertifikasi</th>
-                <th>Prestasi Kompetisi</th>
-                <th>Pengalaman Proyek</th>
-                <th>Passion</th>
-                <th>Kriteria Tambahan</th>
+                <th>Kriteria</th>
+                <th>Nama Kriteria</th>
+                <th style="width: 18%;">Bobot (1-9)</th>
             </tr>
-        </thead>
-        <tbody id="studentTableBody">
-        </tbody>
-    </table>
-
-    <!-- Tabel Hasil Tahapan FAHP -->
-    <div id="results"></div>
-
-    <!-- Jurnal Refrensi -->
-    <div>
-        <h2>Referensi</h2>
-        <table>
-            <tr><th>No</th><th>Nama Jurnal</th><th>Penulis</th><th>Penggunaan</th><th>Tahun</th><th>Url</th></tr>
-            <tr><td>01</td><td>Applications of the extent analysis method on fuzzy AHP.</td><td>Chang, D. Y.</td><td>TFN</td><td>1996</td><td><a href="https://sci-hub.st/10.1016/0377-2217(95)00300-2" target="_blank">Link</a></td></tr>
-            <tr><td>02</td><td>A fuzzy multicriteria methodology for selection among energy alternatives</td><td>Cengiz Kahraman, Ihsan Kaya</td><td>Alur FAHP</td><td>2010</td><td><a href="https://sci-hub.st/10.1016/j.eswa.2010.02.095" target="_blank">Link</a></td></tr>
-            <!-- <tr><td>02</td><td>Fuzzy multiple attribute decision making: Methods and applications.</td><td>Chen, S. J., & Hwang, C. L.</td><td>1992</td><td><a href="https://sci-hub.st/10.1142/9789812795533_0002" target="_blank">Link</a></td></tr> -->
+            <tr>
+                <td>01</td>
+                <td>K1</td>
+                <td>Nilai Akademik</td>
+                <td><input type="range" id="nilaiAkademik" min="1" max="9" step="1"
+                        oninput="document.getElementById('nilaiAkademikValue').innerText = this.value">
+                    <span id="nilaiAkademikValue">5</span>
+                </td>
+            </tr>
+            <tr>
+                <td>02</td>
+                <td>K2</td>
+                <td>Sertifikasi</td>
+                <td><input type="range" id="sertifikasi" min="1" max="9" step="1"
+                        oninput="document.getElementById('sertifikasiValue').innerText = this.value">
+                    <span id="sertifikasiValue">5</span>
+                </td>
+            </tr>
+            <tr>
+                <td>03</td>
+                <td>K3</td>
+                <td>Prestasi Kompetisi</td>
+                <td><input type="range" id="prestasiKompetisi" min="1" max="9" step="1"
+                        oninput="document.getElementById('prestasiKompetisiValue').innerText = this.value">
+                    <span id="prestasiKompetisiValue">5</span>
+                </td>
+            </tr>
+            <tr>
+                <td>04</td>
+                <td>K4</td>
+                <td>Pengalaman Proyek</td>
+                <td><input type="range" id="pengalamanProyek" min="1" max="9" step="1"
+                        oninput="document.getElementById('pengalamanProyekValue').innerText = this.value">
+                    <span id="pengalamanProyekValue">5</span>
+                </td>
+            </tr>
+            <tr>
+                <td>05</td>
+                <td>K5</td>
+                <td>Passion</td>
+                <td><input type="range" id="passion" min="1" max="9" step="1"
+                        oninput="document.getElementById('passionValue').innerText = this.value">
+                    <span id="passionValue">5</span>
+                </td>
+            </tr>
+            <tr>
+                <td>06</td>
+                <td>K6</td>
+                <td>Kriteria Tambahan</td>
+                <td><input type="range" id="kriteriaTambahan" min="1" max="9" step="1"
+                        oninput="document.getElementById('kriteriaTambahanValue').innerText = this.value">
+                    <span id="kriteriaTambahanValue">5</span>
+                </td>
+            </tr>
         </table>
+
+
+        <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
+
+        <!-- Hasil Ranking -->
+        <div id="rankingResults"></div>
+
+        <!-- Tabel Data Mahasiswa Dummy -->
+        <h2>Data Mahasiswa</h2>
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Mahasiswa</th>
+                    <th>Nilai Akademik</th>
+                    <th>Sertifikasi</th>
+                    <th>Prestasi Kompetisi</th>
+                    <th>Pengalaman Proyek</th>
+                    <th>Passion</th>
+                    <th>Kriteria Tambahan</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+            </tbody>
+        </table>
+
+        <!-- Tabel Hasil Tahapan FAHP -->
+        <div id="results"></div>
+
+        <!-- Jurnal Refrensi -->
+        <div>
+            <h2>Referensi</h2>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Jurnal</th>
+                    <th>Penulis</th>
+                    <th>Penggunaan</th>
+                    <th>Tahun</th>
+                    <th>Url</th>
+                </tr>
+                <tr>
+                    <td>01</td>
+                    <td>Applications of the extent analysis method on fuzzy AHP.</td>
+                    <td>Chang, D. Y.</td>
+                    <td>TFN</td>
+                    <td>1996</td>
+                    <td><a href="https://sci-hub.st/10.1016/0377-2217(95)00300-2" target="_blank">Link</a></td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td>A fuzzy multicriteria methodology for selection among energy alternatives</td>
+                    <td>Cengiz Kahraman, Ihsan Kaya</td>
+                    <td>Alur FAHP</td>
+                    <td>2010</td>
+                    <td><a href="https://sci-hub.st/10.1016/j.eswa.2010.02.095" target="_blank">Link</a></td>
+                </tr>
+                <!-- <tr><td>02</td><td>Fuzzy multiple attribute decision making: Methods and applications.</td><td>Chen, S. J., & Hwang, C. L.</td><td>1992</td><td><a href="https://sci-hub.st/10.1142/9789812795533_0002" target="_blank">Link</a></td></tr> -->
+            </table>
+        </div>
     </div>
-</div>
 
-<script>
-    // Data Mahasiswa Dummy
-    const students = [
-        {name: "Zhelter", criteria: [80, 90, 85, 95, 75, 65]},
-        {name: "Andra", criteria: [75, 85, 80, 90, 70, 60]},
-        {name: "Rachel", criteria: [85, 88, 80, 85, 75, 65]},
-        {name: "John", criteria: [70, 78, 75, 80, 70, 60]},
-        {name: "Lily", criteria: [90, 85, 80, 95, 78, 70]},
-        {name: "Mark", criteria: [88, 92, 85, 87, 80, 65]},
-        {name: "Elisa", criteria: [78, 75, 70, 88, 72, 66]},
-        {name: "Sam", criteria: [82, 85, 83, 86, 78, 69]},
-        {name: "Lucy", criteria: [76, 80, 79, 82, 75, 68]},
-        {name: "Peter", criteria: [88, 90, 85, 91, 79, 70]},
-    ];
+    <script>
+        // Data Mahasiswa Dummy
+        const students = [
+            { name: "Zhelter", criteria: [80, 90, 85, 95, 75, 65] },
+            { name: "Andra", criteria: [75, 85, 80, 90, 70, 60] },
+            { name: "Rachel", criteria: [85, 88, 80, 85, 75, 65] },
+            { name: "John", criteria: [70, 78, 75, 80, 70, 60] },
+            { name: "Lily", criteria: [90, 85, 80, 95, 78, 70] },
+            { name: "Mark", criteria: [88, 92, 85, 87, 80, 65] },
+            { name: "Elisa", criteria: [78, 75, 70, 88, 72, 66] },
+            { name: "Sam", criteria: [82, 85, 83, 86, 78, 69] },
+            { name: "Lucy", criteria: [76, 80, 79, 82, 75, 68] },
+            { name: "Peter", criteria: [88, 90, 85, 91, 79, 70] },
+        ];
 
-    // Load data mahasiswa ke dalam tabel
-    function loadStudentTable() {
-        const tableBody = document.getElementById("studentTableBody");
-        tableBody.innerHTML = "";
-        students.forEach((student, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
-            tableBody.appendChild(row);
-        });
-    }
+        // Load data mahasiswa ke dalam tabel
+        function loadStudentTable() {
+            const tableBody = document.getElementById("studentTableBody");
+            tableBody.innerHTML = "";
+            students.forEach((student, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
+                tableBody.appendChild(row);
+            });
+        }
 
-    loadStudentTable();
+        loadStudentTable();
 
-    function runFuzzyAHP() {
-        // Ambil bobot dari input field
-        const weights = {
-            'Nilai Akademik': parseFloat(document.getElementById("nilaiAkademik").value),
-            'Sertifikasi': parseFloat(document.getElementById("sertifikasi").value),
-            'Prestasi Kompetisi': parseFloat(document.getElementById("prestasiKompetisi").value),
-            'Pengalaman Proyek': parseFloat(document.getElementById("pengalamanProyek").value),
-            'Passion': parseFloat(document.getElementById("passion").value),
-            'Kriteria Tambahan': parseFloat(document.getElementById("kriteriaTambahan").value),
-        };
+        function runFuzzyAHP() {
+            // Ambil bobot dari input field
+            const weights = {
+                'Nilai Akademik': parseFloat(document.getElementById("nilaiAkademik").value),
+                'Sertifikasi': parseFloat(document.getElementById("sertifikasi").value),
+                'Prestasi Kompetisi': parseFloat(document.getElementById("prestasiKompetisi").value),
+                'Pengalaman Proyek': parseFloat(document.getElementById("pengalamanProyek").value),
+                'Passion': parseFloat(document.getElementById("passion").value),
+                'Kriteria Tambahan': parseFloat(document.getElementById("kriteriaTambahan").value),
+            };
 
-        const pairwiseMatrix = generatePairwiseMatrix(weights);
-        const tfn = generateTFNFromWeights(weights);
-        const normalizedTFN = normalizeTFN(tfn);
-        const fuzzyWeightVector = calculateFuzzyWeightVector(normalizedTFN);
-        const crispWeights = defuzzify(fuzzyWeightVector);
-        const normalizedCrispWeights = normalizeCrispWeights(crispWeights);
-        const lambda_max = calculateEigenvalue(pairwiseMatrix, normalizedCrispWeights);
-        const CI = calculateCI(lambda_max, Object.keys(weights).length);
-        const RI_values = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49];
-        const CR = calculateCR(CI, RI_values[Object.keys(weights).length - 1]);
-        const status = CR <= 0.1 ? "Konsisten" : "Tidak Konsisten";
+            const pairwiseMatrix = generatePairwiseMatrix(weights);
+            const tfn = generateTFNFromWeights(weights);
+            const normalizedTFN = normalizeTFN(tfn);
+            const fuzzyWeightVector = calculateFuzzyWeightVector(normalizedTFN);
+            const crispWeights = defuzzify(fuzzyWeightVector);
+            const normalizedCrispWeights = normalizeCrispWeights(crispWeights);
+            const lambda_max = calculateEigenvalue(pairwiseMatrix, normalizedCrispWeights);
+            const CI = calculateCI(lambda_max, Object.keys(weights).length);
+            const RI_values = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49];
+            const CR = calculateCR(CI, RI_values[Object.keys(weights).length - 1]);
+            const status = CR <= 0.1 ? "Konsisten" : "Tidak Konsisten";
 
-        // Display results in tables
-        const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = `
+            // Display results in tables
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = `
             <h2>1. Matriks Perbandingan Berpasangan</h2>
             ${generateTable(pairwiseMatrix, true)}
             <p>Penjelasan:</p>
@@ -186,16 +299,16 @@
             <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
         `;
 
-        // Calculate ranking and display ranking table
-        students.forEach(student => {
-            student.score = student.criteria.reduce((sum, value, index) => {
-                return sum + value * Object.values(normalizedCrispWeights)[index];
-            }, 0);
-        });
+            // Calculate ranking and display ranking table
+            students.forEach(student => {
+                student.score = student.criteria.reduce((sum, value, index) => {
+                    return sum + value * Object.values(normalizedCrispWeights)[index];
+                }, 0);
+            });
 
-        students.sort((a, b) => b.score - a.score);
+            students.sort((a, b) => b.score - a.score);
 
-        let rankingTable = `<h2>Ranking Mahasiswa</h2>
+            let rankingTable = `<h2>Ranking Mahasiswa</h2>
                             <table>
                                 <tr>
                                     <th>Rank</th>
@@ -209,132 +322,133 @@
                                     <th>Kriteria Tambahan</th>
                                 </tr>`;
 
-        students.forEach((student, index) => {
-            rankingTable += `<tr>
+            students.forEach((student, index) => {
+                rankingTable += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${student.name}</td>
                                 <td>${student.score.toFixed(2)}</td>
                                 ${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}
                             </tr>`;
-        });
-
-        rankingTable += `</table>`;
-        document.getElementById("rankingResults").innerHTML = rankingTable;
-    }
-
-    function generatePairwiseMatrix(weights) {
-        const matrix = {};
-        const criteria = Object.keys(weights);
-        criteria.forEach(ci => {
-            matrix[ci] = {};
-            criteria.forEach(cj => {
-                matrix[ci][cj] = [weights[ci] / weights[cj], weights[ci] / weights[cj], weights[ci] / weights[cj]];
             });
-        });
-        return matrix;
-    }
 
-    function generateTFNFromWeights(weights, threshold = 0.15) {
-        const tfn = {};
-        Object.entries(weights).forEach(([key, weight]) => {
-            const lower = weight - (weight * threshold);
-            const middle = weight;
-            const upper = weight + (weight * threshold);
-            tfn[key] = [lower, middle, upper];
-        });
-        return tfn;
-    }
-
-    function normalizeTFN(tfn) {
-        const total = [0, 0, 0];
-        Object.values(tfn).forEach(values => {
-            for (let i = 0; i < 3; i++) {
-                total[i] += values[i];
-            }
-        });
-        const normalizedTFN = {};
-        Object.entries(tfn).forEach(([key, values]) => {
-            normalizedTFN[key] = [values[0] / total[2], values[1] / total[1], values[2] / total[0]];
-        });
-        return normalizedTFN;
-    }
-
-    function calculateFuzzyWeightVector(normalizedTFN) {
-        const fuzzyWeightVector = {};
-        const n = Object.keys(normalizedTFN).length;
-        Object.entries(normalizedTFN).forEach(([key, values]) => {
-            fuzzyWeightVector[key] = [Math.pow(values[0], 1/n), Math.pow(values[1], 1/n), Math.pow(values[2], 1/n)];
-        });
-        return fuzzyWeightVector;
-    }
-
-    function defuzzify(fuzzyWeightVector) {
-        const crispWeights = {};
-        Object.entries(fuzzyWeightVector).forEach(([key, values]) => {
-            crispWeights[key] = (values[0] + values[1] + values[2]) / 3;
-        });
-        return crispWeights;
-    }
-
-    function normalizeCrispWeights(crispWeights) {
-        const total = Object.values(crispWeights).reduce((sum, weight) => sum + weight, 0);
-        const normalizedWeights = {};
-        Object.entries(crispWeights).forEach(([key, weight]) => {
-            normalizedWeights[key] = weight / total;
-        });
-        return normalizedWeights;
-    }
-
-    function calculateEigenvalue(matrix, weights) {
-        const n = Object.keys(weights).length;
-        let sum = 0;
-        Object.entries(weights).forEach(([i, wi]) => {
-            let rowSum = 0;
-            Object.entries(weights).forEach(([j, wj]) => {
-                rowSum += matrix[i][j][1] * wj;
-            });
-            sum += rowSum / wi;
-        });
-        return sum / n;
-    }
-
-    function calculateCI(lambda, n) {
-        return (lambda - n) / (n - 1);
-    }
-
-    function calculateCR(CI, RI) {
-        return CI / RI;
-    }
-
-    function generateTable(data, isMatrix = false, singleColumn = false) {
-        let html = '<table><thead><tr>';
-        const keys = Object.keys(data);
-        html += `<th>${isMatrix ? 'Kriteria' : 'Nama'}</th>`;
-        if (isMatrix) {
-            keys.forEach(key => html += `<th>${key}</th>`);
-            html += '</tr></thead><tbody>';
-            keys.forEach(key => {
-                html += `<tr><td>${key}</td>`;
-                keys.forEach(subkey => html += `<td>${data[key][subkey][1].toFixed(2)}</td>`);
-                html += '</tr>';
-            });
-        } else {
-            if (!singleColumn) html += '<th>Lower</th><th>Middle</th><th>Upper</th>';
-            else html += '<th>Value</th>';
-            html += '</tr></thead><tbody>';
-            Object.entries(data).forEach(([key, values]) => {
-                html += `<tr><td>${key}</td>`;
-                if (!singleColumn) {
-                    values.forEach(val => html += `<td>${val.toFixed(4)}</td>`);
-                } else {
-                    html += `<td>${values.toFixed(4)}</td>`;
-                }
-                html += '</tr>';
-            });
+            rankingTable += `</table>`;
+            document.getElementById("rankingResults").innerHTML = rankingTable;
         }
-        html += '</tbody></table>';
-        return html;
-    }
-</script>
+
+        function generatePairwiseMatrix(weights) {
+            const matrix = {};
+            const criteria = Object.keys(weights);
+            criteria.forEach(ci => {
+                matrix[ci] = {};
+                criteria.forEach(cj => {
+                    matrix[ci][cj] = [weights[ci] / weights[cj], weights[ci] / weights[cj], weights[ci] / weights[cj]];
+                });
+            });
+            return matrix;
+        }
+
+        function generateTFNFromWeights(weights, threshold = 0.15) {
+            const tfn = {};
+            Object.entries(weights).forEach(([key, weight]) => {
+                const lower = weight - (weight * threshold);
+                const middle = weight;
+                const upper = weight + (weight * threshold);
+                tfn[key] = [lower, middle, upper];
+            });
+            return tfn;
+        }
+
+        function normalizeTFN(tfn) {
+            const total = [0, 0, 0];
+            Object.values(tfn).forEach(values => {
+                for (let i = 0; i < 3; i++) {
+                    total[i] += values[i];
+                }
+            });
+            const normalizedTFN = {};
+            Object.entries(tfn).forEach(([key, values]) => {
+                normalizedTFN[key] = [values[0] / total[2], values[1] / total[1], values[2] / total[0]];
+            });
+            return normalizedTFN;
+        }
+
+        function calculateFuzzyWeightVector(normalizedTFN) {
+            const fuzzyWeightVector = {};
+            const n = Object.keys(normalizedTFN).length;
+            Object.entries(normalizedTFN).forEach(([key, values]) => {
+                fuzzyWeightVector[key] = [Math.pow(values[0], 1 / n), Math.pow(values[1], 1 / n), Math.pow(values[2], 1 / n)];
+            });
+            return fuzzyWeightVector;
+        }
+
+        function defuzzify(fuzzyWeightVector) {
+            const crispWeights = {};
+            Object.entries(fuzzyWeightVector).forEach(([key, values]) => {
+                crispWeights[key] = (values[0] + values[1] + values[2]) / 3;
+            });
+            return crispWeights;
+        }
+
+        function normalizeCrispWeights(crispWeights) {
+            const total = Object.values(crispWeights).reduce((sum, weight) => sum + weight, 0);
+            const normalizedWeights = {};
+            Object.entries(crispWeights).forEach(([key, weight]) => {
+                normalizedWeights[key] = weight / total;
+            });
+            return normalizedWeights;
+        }
+
+        function calculateEigenvalue(matrix, weights) {
+            const n = Object.keys(weights).length;
+            let sum = 0;
+            Object.entries(weights).forEach(([i, wi]) => {
+                let rowSum = 0;
+                Object.entries(weights).forEach(([j, wj]) => {
+                    rowSum += matrix[i][j][1] * wj;
+                });
+                sum += rowSum / wi;
+            });
+            return sum / n;
+        }
+
+        function calculateCI(lambda, n) {
+            return (lambda - n) / (n - 1);
+        }
+
+        function calculateCR(CI, RI) {
+            return CI / RI;
+        }
+
+        function generateTable(data, isMatrix = false, singleColumn = false) {
+            let html = '<table><thead><tr>';
+            const keys = Object.keys(data);
+            html += `<th>${isMatrix ? 'Kriteria' : 'Nama'}</th>`;
+            if (isMatrix) {
+                keys.forEach(key => html += `<th>${key}</th>`);
+                html += '</tr></thead><tbody>';
+                keys.forEach(key => {
+                    html += `<tr><td>${key}</td>`;
+                    keys.forEach(subkey => html += `<td>${data[key][subkey][1].toFixed(2)}</td>`);
+                    html += '</tr>';
+                });
+            } else {
+                if (!singleColumn) html += '<th>Lower</th><th>Middle</th><th>Upper</th>';
+                else html += '<th>Value</th>';
+                html += '</tr></thead><tbody>';
+                Object.entries(data).forEach(([key, values]) => {
+                    html += `<tr><td>${key}</td>`;
+                    if (!singleColumn) {
+                        values.forEach(val => html += `<td>${val.toFixed(4)}</td>`);
+                    } else {
+                        html += `<td>${values.toFixed(4)}</td>`;
+                    }
+                    html += '</tr>';
+                });
+            }
+            html += '</tbody></table>';
+            return html;
+        }
+    </script>
 </body>
+
 </html>
