@@ -169,6 +169,7 @@
             </tbody>
         </table>
         <button onclick="randomizeStudentData()">Randomisasi Data Dummy</button>
+        <!-- <button onclick="randomizeStudentBali()">Randomisasi Data Dummy (Bali)</button> -->
 
         <!-- Tabel Hasil Tahapan FAHP -->
         <div id="results"></div>
@@ -221,6 +222,35 @@
             "Sutrisno", "Prakoso", "Nugroho", "Gunawan", "Saputri", "Mulya", "Raharjo", "Baskoro", "Amalia", "Saraswati"
         ];
 
+        // const firstName = [
+        //     "Asep", "Neng", "Ujang", "Euis", "Yayan", "Iis", "Dadang", "Oon", "Entin", "Deni",
+        //     "Wawan", "Ayi", "Cecep", "Mimin", "Eep", "Yanti", "Teten", "Eneng", "Iyan", "Iim",
+        //     "Ocid", "Iroh", "Nana", "Itje", "Yuyun", "Uci", "Ocid", "Entis", "Aam", "Rina",
+        //     "Uum", "Eha", "Ujang", "Onih", "Ade", "Iyet", "Maman", "Ucih", "Neni", "Euis"
+        // ];
+
+        // const lastName = [
+        //     "Suryana", "Wirawan", "Gunawan", "Kusnadi", "Hidayat", "Sukmana", "Rukmana", "Suryadi", "Permana", "Sudrajat",
+        //     "Wangsadidjaja", "Kurniawan", "Suparman", "Suryaman", "Kurniadi", "Heryanto", "Suhendar", "Nurjaman", "Wiguna", "Suradji",
+        //     "Santika", "Kuswara", "Wirawan", "Juhara", "Suharja", "Wirakusumah", "Sunarya", "Kartiwa", "Adikara", "Rukmiati",
+        //     "Suryadi", "Sumirat", "Kusnandar", "Wijaya", "Manulang", "Nugraha", "Maulana", "Jatmika", "Cahyadi", "Cahyono"
+        // ];
+
+        // const firstNameBali = [
+        //     "Wayan", "Made", "Nyoman", "Ketut", "Komang", "Putu", "Gede", "Desak", "Kadek", "Luh",
+        //     "Nengah", "Agung", "Ida Ayu", "Ida Bagus", "Gusti", "I Gusti", "Dewa", "Dewi", "Ni", "I",
+        //     "Raka", "Cokorda", "Tjokorda", "Sri", "Ayu", "Diah", "Luh Putu", "Anak Agung", "Rai", "Mangku"
+        // ];
+
+        // const lastNameBali = [
+        //     "Suwena", "Antara", "Mahendra", "Widhi", "Yoga", "Yasa", "Suartana", "Wijaya", "Putra", "Sukadana",
+        //     "Santhi", "Putri", "Astawa", "Swari", "Yadnya", "Merta", "Sukma", "Surya", "Santika", "Asmara",
+        //     "Jaya", "Wardana", "Satria", "Darmawan", "Mantra", "Suwitra", "Setiawan", "Arimbawa", "Artha", "Sunarta",
+        //     "Ardika", "Adi", "Suryawan", "Sukerta", "Saputra", "Narayana", "Bhuana", "Sudarsana", "Wiguna", "Wijaya"
+        // ];
+
+
+
         const grades = [60, 65, 70, 75, 80, 85, 90];
 
         // Data Mahasiswa Dummy
@@ -253,6 +283,22 @@
             loadStudentTable();
             runFuzzyAHP()
         }
+
+        // function randomizeStudentBali() {
+        //     students.forEach(student => {
+        //         // Ambil nama depan dan belakang acak
+        //         const randomFirstNameBali = firstName[Math.floor(Math.random() * firstNameBali.length)];
+        //         const randomLastNameBali = lastName[Math.floor(Math.random() * lastNameBali.length)];
+        //         student.name = `${randomFirstNameBali} ${randomLastNameBali}`;
+
+        //         // Ambil 6 nilai acak dari array grades untuk kriteria
+        //         student.criteria = Array.from({ length: 6 }, () => grades[Math.floor(Math.random() * grades.length)]);
+        //     });
+
+        //     // Perbarui tabel setelah data diacak
+        //     loadStudentTable();
+        //     runFuzzyAHP()
+        // }
 
         function resetSlider(sliderId, valueId) {
             const sliderElement = document.getElementById(sliderId);
@@ -401,6 +447,20 @@
                 <p>Tujuan:</p>
                 <p>- Memastikan konsistensi dari matriks perbandingan berpasangan. Jika CR ≤ 0.1, hasil dianggap konsisten, sehingga hasil perhitungan dapat dipercaya untuk penilaian akhir.</p>
                 <br><br>
+
+                <h2>8. Hasil Analisis</h2>
+                <p>Setelah tahapan analisis Fuzzy AHP selesai, kita dapat menggunakan bobot kriteria yang telah dinormalisasi untuk menilai dan meranking kandidat berdasarkan kriteria yang telah ditentukan.</p>
+                <p>Hasil perankingan kandidat akan ditampilkan di bawah tabel data mahasiswa.</p>
+                <div id="explainResults"></div>
+                <p>Penjelasan:</p>
+                <p>- Setelah mendapatkan bobot kriteria yang dinormalisasi, kita dapat menghitung skor untuk setiap mahasiswa berdasarkan nilai kriteria yang dimiliki.</p>
+                <p>- Skor dihitung dengan mengalikan nilai kriteria mahasiswa dengan bobot kriteria yang telah dinormalisasi.</p>
+                <p>- Mahasiswa dengan skor tertinggi akan mendapatkan peringkat teratas, menunjukkan kandidat terbaik berdasarkan evaluasi multi-kriteria.</p>
+                <p>Rumus: Skor Mahasiswa = Σ (Nilai Kriteria[i] * Bobot Kriteria[i])</p>
+                <p>Tujuan:</p>
+                <p>- Memberikan peringkat kandidat berdasarkan preferensi multi-kriteria yang telah diukur dan dinormalisasi, memudahkan proses seleksi dan pengambilan keputusan.</p>
+                <br><br>
+
             `;
 
             // Calculate ranking and display ranking table
@@ -413,7 +473,7 @@
 
             students.sort((a, b) => b.score - a.score);
 
-            let rankingTable = `<h2>Ranking Mahasiswa</h2>
+            let rankingTable = `
                             <table>
                                 <tr>
                                     <th>Rank</th>
@@ -439,7 +499,8 @@
             });
 
             rankingTable += `</table>`;
-            document.getElementById("rankingResults").innerHTML = rankingTable;
+            document.getElementById("rankingResults").innerHTML = `<h2>Ranking Mahasiswa</h2>` + rankingTable;
+            document.getElementById("explainResults").innerHTML = rankingTable;
         }
 
         function generatePairwiseMatrix(weights) {
