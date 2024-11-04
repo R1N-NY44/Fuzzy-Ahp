@@ -129,7 +129,7 @@
                     <button onclick="resetSlider('passion', 'passionValue')">↩️</button>
                 </td>
             </tr>
-            <!-- <tr>
+            <tr>
                 <td>06</td>
                 <td>K6</td>
                 <td>Kriteria Tambahan</td>
@@ -138,7 +138,7 @@
                     <span id="kriteriaTambahanValue">5</span>
                     <button onclick="resetSlider('kriteriaTambahan', 'kriteriaTambahanValue')">↩️</button>
                 </td>
-            </tr> -->
+            </tr>
         </table>
 
         <div style="display: flex; gap: 1rem;">
@@ -162,7 +162,7 @@
                     <th>Prestasi Kompetisi</th>
                     <th>Pengalaman Proyek</th>
                     <th>Passion</th>
-                    <!-- <th>Kriteria Tambahan</th> -->
+                    <th>Kriteria Tambahan</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
@@ -255,16 +255,16 @@
 
         // Data Mahasiswa Dummy
         const students = [
-            { name: "Budi Pratama", criteria: [80, 90, 85, 95, 75] },
-            { name: "Lestari Rahmawati", criteria: [75, 85, 80, 90, 70] },
-            { name: "Agus Santoso", criteria: [85, 88, 80, 85, 75] },
-            { name: "Ahmad Pratama", criteria: [70, 78, 75, 80, 70] },
-            { name: "Rani Susanti", criteria: [90, 85, 80, 95, 78] },
-            { name: "Rizky Saputra", criteria: [88, 92, 85, 87, 80] },
-            { name: "Putri Wijaya", criteria: [78, 75, 70, 88, 72] },
-            { name: "Dewi Rahmawati", criteria: [82, 85, 83, 86, 78] },
-            { name: "Siti Nuraini", criteria: [76, 80, 79, 82, 75] },
-            { name: "Budi Utama", criteria: [88, 90, 85, 91, 79] },
+            { name: "Budi Pratama", criteria: [80, 90, 85, 95, 75, 65] },
+            { name: "Lestari Rahmawati", criteria: [75, 85, 80, 90, 70, 60] },
+            { name: "Agus Santoso", criteria: [85, 88, 80, 85, 75, 65] },
+            { name: "Ahmad Pratama", criteria: [70, 78, 75, 80, 70, 60] },
+            { name: "Rani Susanti", criteria: [90, 85, 80, 95, 78, 70] },
+            { name: "Rizky Saputra", criteria: [88, 92, 85, 87, 80, 65] },
+            { name: "Putri Wijaya", criteria: [78, 75, 70, 88, 72, 66] },
+            { name: "Dewi Rahmawati", criteria: [82, 85, 83, 86, 78, 69] },
+            { name: "Siti Nuraini", criteria: [76, 80, 79, 82, 75, 68] },
+            { name: "Budi Utama", criteria: [88, 90, 85, 91, 79, 70] },
         ];
 
         // Load data mahasiswa ke dalam tabel
@@ -276,7 +276,7 @@
                 student.name = `${randomFirstName} ${randomLastName}`;
 
                 // Ambil 6 nilai acak dari array grades untuk kriteria
-                student.criteria = Array.from({ length: 5 }, () => grades[Math.floor(Math.random() * grades.length)]);
+                student.criteria = Array.from({ length: 6 }, () => grades[Math.floor(Math.random() * grades.length)]);
             });
 
             // Perbarui tabel setelah data diacak
@@ -318,7 +318,7 @@
                     { id: "prestasiKompetisi", valueId: "prestasiKompetisiValue" },
                     { id: "pengalamanProyek", valueId: "pengalamanProyekValue" },
                     { id: "passion", valueId: "passionValue" },
-                    // { id: "kriteriaTambahan", valueId: "kriteriaTambahanValue" }
+                    { id: "kriteriaTambahan", valueId: "kriteriaTambahanValue" }
                 ];
 
                 // Atur setiap slider ke nilai default, misalnya 5
@@ -356,7 +356,7 @@
                 'Prestasi Kompetisi': parseFloat(document.getElementById("prestasiKompetisi").value),
                 'Pengalaman Proyek': parseFloat(document.getElementById("pengalamanProyek").value),
                 'Passion': parseFloat(document.getElementById("passion").value),
-                // 'Kriteria Tambahan': parseFloat(document.getElementById("kriteriaTambahan").value),
+                'Kriteria Tambahan': parseFloat(document.getElementById("kriteriaTambahan").value),
             };
 
             const pairwiseMatrix = generatePairwiseMatrix(weights);
@@ -485,6 +485,7 @@
                                     <th>Prestasi Kompetisi</th>
                                     <th>Pengalaman Proyek</th>
                                     <th>Passion</th>
+                                    <th>Kriteria Tambahan</th>
                                 </tr>`;
 
             students.forEach((student, index) => {
