@@ -24,20 +24,14 @@
             background-color: #f2f2f2;
         }
 
-        .actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .data-criterion {
+        .student-criterion {
             border: none;
             font-size: medium;
             width: 50px;
             text-align: center;
         }
 
-        .data-name {
+        .student-name {
             border: none;
             font-size: medium;
             width: auto;
@@ -166,7 +160,7 @@
 
         <div style="display: flex; gap: 1rem;">
             <button onclick="runFuzzyAHP()">Hitung Matrix FAHP</button>
-            <!-- <button onclick="resetSliders()">Reset Slider Pembobotan</button> -->
+            <button onclick="resetSliders()">Reset Slider Pembobotan</button>
         </div>
 
 
@@ -185,7 +179,7 @@
             <tbody id="studentTableBody">
             </tbody>
         </table>
-        <!-- <button onclick="randomizeStudentData()">Randomisasi Data Dummy</button> -->
+        <button onclick="randomizeStudentData()">Randomisasi Data Dummy</button>
 
         <!-- Tabel Hasil Tahapan FAHP -->
         <div id="results"></div>
@@ -225,11 +219,11 @@
     <script>
 
         let categories = [
-            { name: "Nilai Akademik", weight: 5, isDefault: true },
-            { name: "Sertifikasi", weight: 5, isDefault: true },
-            { name: "Prestasi Kompetisi", weight: 5, isDefault: true },
-            { name: "Pengalaman Proyek", weight: 5, isDefault: true },
-            { name: "Passion", weight: 5, isDefault: true }
+            { name: "Nilai Akademik", weight: 5 },
+            { name: "Sertifikasi", weight: 5 },
+            { name: "Prestasi Kompetisi", weight: 5 },
+            { name: "Pengalaman Proyek", weight: 5 },
+            { name: "Passion", weight: 5 }
         ];
 
         const firstName = [
@@ -249,6 +243,18 @@
         const grades = [60, 65, 70, 75, 80, 85, 90];
 
         // Data Mahasiswa Dummy
+        // const students = [
+        //     { name: "Budi Pratama", criteria: [80, 90, 85, 95, 75] },
+        //     { name: "Lestari Rahmawati", criteria: [75, 85, 80, 90, 70] },
+        //     { name: "Agus Santoso", criteria: [85, 88, 80, 85, 75] },
+        //     { name: "Ahmad Pratama", criteria: [70, 78, 75, 80, 70] },
+        //     { name: "Rani Susanti", criteria: [90, 85, 80, 95, 78] },
+        //     { name: "Rizky Saputra", criteria: [88, 92, 85, 87, 80] },
+        //     { name: "Putri Wijaya", criteria: [78, 75, 70, 88, 72] },
+        //     { name: "Dewi Rahmawati", criteria: [82, 85, 83, 86, 78] },
+        //     { name: "Siti Nuraini", criteria: [76, 80, 79, 82, 75] },
+        //     { name: "Budi Utama", criteria: [88, 90, 85, 91, 79] },
+        // ];
         const students = [
             { name: "Budi Pratama", criteria: [80, 90, 85, 95, 75] },
             { name: "Lestari Rahmawati", criteria: [75, 85, 80, 90, 70] },
@@ -286,42 +292,80 @@
             valueElement.innerText = 5; // Perbarui teks tampilan
         }
 
-        // Fungsi untuk memuat tabel mahasiswa
+
+        function resetSliders() {
+            // Tampilkan konfirmasi sebelum reset
+            if (confirm("Apakah Anda yakin ingin mereset semua slider ke nilai default?")) {
+                // Daftar ID slider dan ID teks di sampingnya
+                const sliders = [
+                    { id: "nilaiAkademik", valueId: "nilaiAkademikValue" },
+                    { id: "sertifikasi", valueId: "sertifikasiValue" },
+                    { id: "prestasiKompetisi", valueId: "prestasiKompetisiValue" },
+                    { id: "pengalamanProyek", valueId: "pengalamanProyekValue" },
+                    { id: "passion", valueId: "passionValue" },
+                    // { id: "kriteriaTambahan", valueId: "kriteriaTambahanValue" }
+                ];
+
+                // Atur setiap slider ke nilai default, misalnya 5
+                sliders.forEach(slider => {
+                    const sliderElement = document.getElementById(slider.id);
+                    const valueElement = document.getElementById(slider.valueId);
+                    sliderElement.value = 5; // Nilai default
+                    valueElement.innerText = 5; // Perbarui teks tampilan
+                });
+            }
+        }
+
+        // function loadStudentTable() {
+        //     const tableBody = document.getElementById("studentTableBody");
+        //     tableBody.innerHTML = "";
+
+        //     // Urutkan berdasarkan nama
+        //     const sortedStudents = [...students].sort((a, b) => a.name.localeCompare(b.name));
+
+        //     sortedStudents.forEach((student, index) => {
+        //         const row = document.createElement("tr");
+        //         row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
+        //         tableBody.appendChild(row);
+        //     });
+        // }
+
+        // Fungsi untuk memuat tabel data mahasiswa dengan input yang dapat diubah
+        // function loadStudentTable() {
+        //     const tableBody = document.getElementById("studentTableBody");
+        //     tableBody.innerHTML = "";
+
+        //     // Memuat data mahasiswa dalam tabel dengan input untuk setiap nilai
+        //     students.forEach((student, index) => {
+        //         const row = document.createElement("tr");
+        //         row.innerHTML = `
+        //             <td>${index + 1}</td>
+        //             <td><input type="text" value="${student.name}" data-index="${index}" class="student-name"></td>
+        //             ${student.criteria.map((criterion, criterionIndex) => `
+        //                 <td><input type="number" value="${criterion}" data-student="${index}" data-criterion="${criterionIndex}" class="student-criterion" max="100" min="0"></td>
+        //             `).join('')}
+        //         `;
+        //         tableBody.appendChild(row);
+        //     });
+        // }
+
         function loadStudentTable() {
             const studentTableHeader = document.getElementById("studentTableHeader");
             studentTableHeader.innerHTML = `<th>No</th><th>Nama Mahasiswa</th>` +
-                categories.map(category => `<th>${category.name}</th>`).join("");
+                categories.map((category, index) => `<th>${category.name}</th>`).join("");
 
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
             students.forEach((student, index) => {
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${index + 1}</td>
-            <td><input type="text" class="data-name" value="${student.name}" data-student="${index}" oninput="saveStudentData()"></td>` +
-                    student.criteria.map((score, i) => `
-            <td><input type="number" class="data-criterion" value="${score}" min="0" max="100" data-student="${index}" data-criterion="${i}" oninput="saveStudentData()"></td>`
-                    ).join("");
+                row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>` +
+                    student.criteria.map((score, i) => `<td><input type="number" value="${score}" min="0" max="100" onchange="updateStudentScore(${index}, ${i}, this.value)"></td>`).join("");
                 tableBody.appendChild(row);
             });
         }
 
-        // Fungsi untuk menyimpan data mahasiswa secara menyeluruh
-        function saveStudentData() {
-            const nameInputs = document.querySelectorAll("#studentTableBody input[type='text']");
-            const scoreInputs = document.querySelectorAll("#studentTableBody input[type='number']");
-
-            // Perbarui nama mahasiswa
-            nameInputs.forEach(input => {
-                const studentIndex = input.getAttribute("data-student");
-                students[studentIndex].name = input.value;
-            });
-
-            // Perbarui nilai kriteria mahasiswa
-            scoreInputs.forEach(input => {
-                const studentIndex = input.getAttribute("data-student");
-                const criterionIndex = input.getAttribute("data-criterion");
-                students[studentIndex].criteria[criterionIndex] = parseFloat(input.value);
-            });
+        function updateStudentScore(studentIndex, criteriaIndex, value) {
+            students[studentIndex].criteria[criteriaIndex] = parseInt(value) || 0;
         }
 
         function loadCriteriaTable() {
@@ -335,13 +379,10 @@
                     <td>K${index + 1}</td>
                     <td>${category.name}</td>
                     <td>
-                        <div class="actions">
-                            <input type="range" min="1" max="9" step="1" value="${category.weight}" 
-                                oninput="updateWeight(${index}, this.value)">
-                            <span>${category.weight}</span>
-                            <button onclick="resetSlider(${index})">↩️</button>
-                            ${!category.isDefault ? `<button onclick="removeCriteria(${index})">🗑️</button>` : ""}
-                        </div>
+                        <input type="range" min="1" max="9" step="1" value="${category.weight}" 
+                            oninput="updateWeight(${index}, this.value)">
+                        <span>${category.weight}</span>
+                        <button onclick="resetSlider(${index})">↩️</button>
                     </td>
                 `;
                 criteriaTableBody.appendChild(row);
@@ -374,20 +415,11 @@
                 return;
             }
 
-            categories.push({ name: newCriteriaName, weight: 5, isDefault: false });
+            categories.push({ name: newCriteriaName, weight: 5 });
             students.forEach(student => student.criteria.push(0));
             document.getElementById("newCriteriaName").value = "";
             loadCriteriaTable();
             loadStudentTable();
-        }
-
-        function removeCriteria(index) {
-            if (!categories[index].isDefault) {
-                categories.splice(index, 1);
-                students.forEach(student => student.criteria.splice(index, 1));
-                loadCriteriaTable();
-                loadStudentTable();
-            }
         }
 
         // Fungsi untuk memperbarui seluruh array students sesuai nilai input saat ini
@@ -414,7 +446,6 @@
         function runFuzzyAHP() {
             // Memperbarui seluruh array students dari input saat ini
             updateStudentsArray();
-
 
             // Ambil bobot dari input field
             const weights = Object.fromEntries(categories.map((c, i) => [c.name, c.weight]));
@@ -547,20 +578,17 @@
                                     <th>Rank</th>
                                     <th>Nama Mahasiswa</th>
                                     <th>Skor</th>
-                                    <!--<th>Rata-Rata Nilai</th>-->
-                                    ` +
-                categories.map(c => `<th>${c.name}</th>`).join("") +
-                `</tr>`;
-
+                                    <th>Rata-Rata Nilai</th>
+                                    ${categories.map(category => `<th>${category.name}</th>`).join("")}
+                                </tr>`;
             students.forEach((student, index) => {
                 rankingTable += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${student.name}</td>
                                 <td>${student.score.toFixed(2)}</td>
-                                <!--<td>${student.average.toFixed(2)}</td>-->
-                                ` +
-                    student.criteria.map(criterion => `<td>${criterion}</td>`).join('') +
-                    `</tr>`;
+                                <td>${student.average.toFixed(2)}</td>
+                                ${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}
+                            </tr>`;
             });
 
             rankingTable += `</table>`;
