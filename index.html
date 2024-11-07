@@ -24,6 +24,20 @@
             background-color: #f2f2f2;
         }
 
+        .student-criterion {
+            border: none;
+            font-size: medium;
+            width: 50px;
+            text-align: center;
+        }
+
+        .student-name {
+            border: none;
+            font-size: medium;
+            width: auto;
+            text-align: center;
+        }
+
         .container {
             max-width: 1000px;
             margin: auto;
@@ -60,6 +74,10 @@
             margin: 3rem 0rem;
             border: 0;
             border-top: 2px dashed rgba(0, 0, 0, 0.29);
+        }
+
+        body{
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
@@ -286,24 +304,64 @@
             }
         }
 
+        // function loadStudentTable() {
+        //     const tableBody = document.getElementById("studentTableBody");
+        //     tableBody.innerHTML = "";
+
+        //     // Urutkan berdasarkan nama
+        //     const sortedStudents = [...students].sort((a, b) => a.name.localeCompare(b.name));
+
+        //     sortedStudents.forEach((student, index) => {
+        //         const row = document.createElement("tr");
+        //         row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
+        //         tableBody.appendChild(row);
+        //     });
+        // }
+
+        // Fungsi untuk memuat tabel data mahasiswa dengan input yang dapat diubah
         function loadStudentTable() {
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
 
-            // Urutkan berdasarkan nama
-            const sortedStudents = [...students].sort((a, b) => a.name.localeCompare(b.name));
-
-            sortedStudents.forEach((student, index) => {
+            // Memuat data mahasiswa dalam tabel dengan input untuk setiap nilai
+            students.forEach((student, index) => {
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td>${student.criteria.map(criterion => `<td>${criterion}</td>`).join('')}`;
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><input type="text" value="${student.name}" data-index="${index}" class="student-name"></td>
+                    ${student.criteria.map((criterion, criterionIndex) => `
+                        <td><input type="number" value="${criterion}" data-student="${index}" data-criterion="${criterionIndex}" class="student-criterion" max="100" min="0"></td>
+                    `).join('')}
+                `;
                 tableBody.appendChild(row);
             });
         }
 
+        // Fungsi untuk memperbarui seluruh array students sesuai nilai input saat ini
+        function updateStudentsArray() {
+            const nameInputs = document.querySelectorAll('.student-name');
+            const criterionInputs = document.querySelectorAll('.student-criterion');
+
+            // Perbarui nama mahasiswa
+            nameInputs.forEach(input => {
+                const index = input.getAttribute('data-index');
+                students[index].name = input.value;
+            });
+
+            // Perbarui nilai kriteria mahasiswa
+            criterionInputs.forEach(input => {
+                const studentIndex = input.getAttribute('data-student');
+                const criterionIndex = input.getAttribute('data-criterion');
+                students[studentIndex].criteria[criterionIndex] = parseFloat(input.value);
+            });
+        }
 
         loadStudentTable();
 
         function runFuzzyAHP() {
+            // Memperbarui seluruh array students dari input saat ini
+            updateStudentsArray();
+
             // Ambil bobot dari input field
             const weights = {
                 'Nilai Akademik': parseFloat(document.getElementById("nilaiAkademik").value),
